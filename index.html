@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Life KPI Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        *{box-sizing:border-box;font-family:Segoe UI}
+        body{
+            margin:0;
+            background:linear-gradient(135deg,#ecfeff,#f0fdf4);
+            transition:.3s
+        }
+        body.dark{
+            background:#0f172a;
+            color:#e5e7eb
+        }
+        body.dark .card,
+        body.dark .header{background:#1e293b;color: #e1cced
+        }
+        .container{max-width:480px;margin:auto;padding:16px}
+        .header{
+            display:flex;justify-content:space-between;align-items:center;
+            padding:16px;border-radius:20px;margin-bottom:16px
+        }
+        .score-circle{
+            width:90px;height:90px;border-radius:50%;
+            background:#22c55e;color:#fff;
+            display:flex;flex-direction:column;align-items:center;justify-content:center;
+            font-weight:bold
+        }
+        .card{
+            background:#fff;border-radius:18px;padding:16px;margin-bottom:16px;
+            box-shadow:0 10px 25px rgba(0,0,0,.05)
+        }
+        .row{margin:12px 0}
+        .label{font-size:14px;margin-bottom:6px}
+        .score-box{display:flex;justify-content:space-between;align-items:center}
+        .score-box input{
+            width:60px;padding:6px;border-radius:8px;
+            border:1px solid #ccc;text-align:center;font-weight:bold
+        }
+        .score-buttons{
+            display:grid;grid-template-columns:repeat(11,1fr);gap:4px
+        }
+        .score-btn{
+            width:28px;height:28px;border-radius:50%;
+            border:none;background:#e5e7eb;font-size:12px;cursor:pointer
+        }
+        .score-btn.active{background:#22c55e;color:#fff;font-weight:bold}
+        .save-btn,.util-btn{
+            width:100%;padding:12px;border:none;border-radius:14px;
+            background:#22c55e;color:#fff;font-size:15px;cursor:pointer;margin-bottom:8px
+        }
+        .util-btn{background: #d64dd4
+        }
+        .warning{text-align:center;color:#dc2626;font-weight:bold}
+        .tabs{display:flex;gap:8px;margin-bottom:12px}
+        .tab{
+            flex:1;padding:10px;border-radius:12px;
+            background:#e5e7eb;text-align:center;cursor:pointer;font-weight:600
+        }
+        .tab.active{background:#22c55e;color:#fff}
+        .hidden{display:none}
+        .top-utils{display:flex;gap:8px;margin-bottom:12px}
+        .small{font-size:13px}
+    </style>
+</head>
+
+<body>
+<div class="container" id="app">
+
+    <header class="header">
+        <div>
+            <h3>السلام عليكم</h3>
+            <p>My Life KPI</p>
+            <div class="small">🔥 Streak: <b id="streak">0</b> days</div>
+        </div>
+        <div class="score-circle">
+            <span id="todayScore">0</span>
+            <small>/100</small>
+        </div>
+    </header>
+
+    <div class="top-utils">
+        <button class="util-btn" onclick="toggleDark()">🌙 Dark</button>
+        <button class="util-btn" onclick="exportPDF()">📤 PDF</button>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('daily',this)">Daily</div>
+        <div class="tab" onclick="showTab('weekly',this)">Weekly</div>
+        <div class="tab" onclick="showTab('monthly',this)">Monthly</div>
+    </div>
+
+    <!-- DAILY -->
+    <div id="daily">
+
+        <!-- FAITH -->
+        <section class="card">
+            <h3>🕌 Faith (25)</h3>
+            <div class="row"><div class="label">5 Times prayer (10)</div><div class="score-box"><input readonly data-group="faith"><div class="score-buttons" data-max="10"></div></div></div>
+            <div class="row"><div class="label">Tahajjud (5)</div><div class="score-box"><input readonly data-group="faith"><div class="score-buttons" data-max="5"></div></div></div>
+            <div class="row"><div class="label">Quran recitation (5)</div><div class="score-box"><input readonly data-group="faith"><div class="score-buttons" data-max="5"></div></div></div>
+            <div class="row"><div class="label">Avoiding sin (5)</div><div class="score-box"><input readonly data-group="faith"><div class="score-buttons" data-max="5"></div></div></div>
+        </section>
+
+        <!-- FAMILY -->
+        <section class="card">
+            <h3>👨‍👩‍👧 Family (20)</h3>
+            <div class="row"><div class="label">Quality Time (8)</div><div class="score-box"><input readonly data-group="family"><div class="score-buttons" data-max="8"></div></div></div>
+            <div class="row"><div class="label">Respect & Care (6)</div><div class="score-box"><input readonly data-group="family"><div class="score-buttons" data-max="6"></div></div></div>
+            <div class="row"><div class="label">Parent Contact (3)</div><div class="score-box"><input readonly data-group="family"><div class="score-buttons" data-max="3"></div></div></div>
+            <div class="row"><div class="label">Child Support (3)</div><div class="score-box"><input readonly data-group="family"><div class="score-buttons" data-max="3"></div></div></div>
+        </section>
+
+        <!-- FITNESS -->
+        <section class="card">
+            <h3>💪 Fitness (15)</h3>
+            <div class="row"><div class="label">Exercise (6)</div><div class="score-box"><input readonly data-group="fitness"><div class="score-buttons" data-max="6"></div></div></div>
+            <div class="row"><div class="label">Healthy Food (4)</div><div class="score-box"><input readonly data-group="fitness"><div class="score-buttons" data-max="4"></div></div></div>
+            <div class="row"><div class="label">Sleep (3)</div><div class="score-box"><input readonly data-group="fitness"><div class="score-buttons" data-max="3"></div></div></div>
+            <div class="row"><div class="label">Water (2)</div><div class="score-box"><input readonly data-group="fitness"><div class="score-buttons" data-max="2"></div></div></div>
+        </section>
+
+        <!-- FINANCE -->
+        <section class="card">
+            <h3>💰 Finance (40)</h3>
+            <div class="row"><div class="label">Skill Learning (15)</div><div class="score-box"><input readonly data-group="finance"><div class="score-buttons" data-max="15"></div></div></div>
+            <div class="row"><div class="label">Income Action (10)</div><div class="score-box"><input readonly data-group="finance"><div class="score-buttons" data-max="10"></div></div></div>
+            <div class="row"><div class="label">Project Output (10)</div><div class="score-box"><input readonly data-group="finance"><div class="score-buttons" data-max="10"></div></div></div>
+            <div class="row"><div class="label">Saving (5)</div><div class="score-box"><input readonly data-group="finance"><div class="score-buttons" data-max="5"></div></div></div>
+        </section>
+
+        <button class="save-btn" onclick="saveToday()">Save Today</button>
+        <p id="warning" class="warning"></p>
+
+        <section class="card">
+            <h3>📊 Pillar-wise Distribution</h3>
+            <canvas id="pillarChart"></canvas>
+        </section>
+
+    </div>
+
+    <!-- WEEKLY -->
+    <div id="weekly" class="hidden">
+        <section class="card"><h3>📊 Weekly Report</h3><canvas id="weeklyChart"></canvas></section>
+    </div>
+
+    <!-- MONTHLY -->
+    <div id="monthly" class="hidden">
+        <section class="card"><h3>📈 Monthly Overview</h3><canvas id="monthlyChart"></canvas></section>
+    </div>
+
+</div>
+
+<script>
+    function showTab(id,el){
+        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+        el.classList.add('active');
+        ['daily','weekly','monthly'].forEach(x=>document.getElementById(x).classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
+    }
+
+    function initButtons(){
+        document.querySelectorAll('.score-buttons').forEach(box=>{
+            let max=+box.dataset.max,input=box.previousElementSibling;
+            for(let i=0;i<=max;i++){
+                let b=document.createElement('button');
+                b.className='score-btn';b.innerText=i;
+                b.onclick=()=>{
+                    input.value=i;
+                    box.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+                    b.classList.add('active');calculate();
+                }
+                box.appendChild(b);
+            }
+        });
+    }
+
+    function calculate(){
+        let t=0,g={faith:0,family:0,fitness:0,finance:0};
+        document.querySelectorAll('input').forEach(i=>{
+            let v=+i.value||0;t+=v;g[i.dataset.group]+=v;
+        });
+        todayScore.innerText=t;
+        warning.innerText=Object.keys(g).filter(k=>g[k]<10).length?'⚠ Weak Pillar Detected':'';
+        drawPillar(g);return t;
+    }
+
+    function saveToday(){
+        let d=new Date().toISOString().slice(0,10);
+        let data=JSON.parse(localStorage.kpi||'{}');
+        data[d]=calculate();localStorage.kpi=JSON.stringify(data);
+        updateStreak();drawCharts();alert('Saved ✅');
+    }
+
+    function updateStreak(){
+        let d=Object.keys(JSON.parse(localStorage.kpi||'{}')).sort();
+        let s=0;
+        for(let i=d.length-1;i>=0;i--){
+            let diff=(new Date()-new Date(d[i]))/86400000;
+            if(diff<=s+1)s++;else break;
+        }
+        streak.innerText=s;
+    }
+
+    function drawCharts(){
+        let data=JSON.parse(localStorage.kpi||'{}');
+        let l=Object.keys(data),v=Object.values(data);
+        if(window.wc)wc.destroy();
+        wc=new Chart(weeklyChart,{type:'line',data:{labels:l,datasets:[{data:v,borderColor:'#22c55e',tension:.4}]},options:{plugins:{legend:{display:false}},scales:{y:{max:100}}}});
+        if(window.mc)mc.destroy();
+        mc=new Chart(monthlyChart,{type:'bar',data:{labels:l,datasets:[{data:v,backgroundColor:'#22c55e'}]},options:{plugins:{legend:{display:false}},scales:{y:{max:100}}}});
+    }
+
+    function drawPillar(g){
+        if(window.pc)pc.destroy();
+        pc=new Chart(pillarChart,{type:'pie',
+            data:{labels:Object.keys(g),datasets:[{data:Object.values(g),backgroundColor:['#22c55e','#ba6ee6','#f59e0b','#ef4444']}]}
+        });
+    }
+
+    function toggleDark(){document.body.classList.toggle('dark')}
+    function exportPDF(){html2pdf().from(app).save('My_KPI_Report.pdf')}
+
+    if(Notification.permission!=='granted')Notification.requestPermission();
+    setInterval(()=>{new Date().getHours()==21&&new Date().getMinutes()==0&&Notification.permission==='granted'&&new Notification('📌 KPI Reminder','Time to update KPI')},60000);
+
+    initButtons();drawCharts();updateStreak();
+</script>
+
+</body>
+</html>
