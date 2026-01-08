@@ -1,3 +1,5 @@
+https://julkar1.github.io/kpi/
+
 A **full-life tracking dashboard** for daily, weekly, and monthly KPI tracking with interactive charts, streaks, and goal alerts. Designed for **personal productivity, habit tracking, and growth**.
 <img width="1424" height="720" alt="image" src="https://github.com/user-attachments/assets/4137b9b0-cb3d-4121-b524-f2ade93fab31" />
 
@@ -56,7 +58,7 @@ my-kpi/
 - This project is **GitHub Pages ready**.
 - Simply push the repo and enable GitHub Pages in **Settings → Pages → Source: main branch → root**.
 - Your live site will be:  
-`https://julkar1.github.io/my-kpi/`
+`https://julkar1.github.io/kpi/`
 
 ## **Tech Stack**
 
